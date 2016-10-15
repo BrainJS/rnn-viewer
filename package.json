@@ -1,0 +1,23 @@
+{
+  "name": "rnn-viewer",
+  "version": "1.0.0",
+  "description": "a brain.js utility for viewing recurrent neural networks using three.js",
+  "main": "index.js",
+  "dependencies": {
+    "three": "^0.81.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harthur-org/rnn-viewer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harthur-org/rnn-viewer/issues"
+  },
+  "homepage": "https://github.com/harthur-org/rnn-viewer#readme"
+}

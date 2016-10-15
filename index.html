@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+	<title>The Chart</title>
+	<style>
+			body {
+				background-color: #000000;
+				margin: 0;
+				overflow: hidden;
+			}
+			#container {
+				cursor:pointer;
+				z-index: 0;
+				width: 100%;
+				height: 100vh;
+			}
+			canvas{
+				z-index: 0;
+			}
+
+		</style>
+</head>
+<body>
+
+<div id="container"></div>
+
+<div style="position: fixed; right: 5px; bottom: 5px; width: 100px; text-align: right;">
+  <button id="top">Top View</button>
+  <button id="side">Side View</button>
+  <button id="default">Default View</button>
+</div>
+</body>
+<script src="node_modules/three/build/three.min.js"></script>
+<script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
+<script src="index.js"></script>
+<script>
+  var rnnViewer = new RNNViewer({
+    container: document.getElementById('container')
+  })
+      .addMatrix({
+        rows: 1,
+        columns: 10
+      })
+      .addMatrix({
+        rows: 20,
+        columns: 20
+      })
+      .addMatrix({
+        rows: 20,
+        columns: 20
+      })
+      .addMatrix({
+        rows: 20,
+        columns: 20
+      })
+      .addMatrix({
+        rows: 20,
+        columns: 20
+      })
+      .addMatrix({
+        rows: 1,
+        columns: 10
+      })
+      .render();
+
+  setInterval(function() {
+    var coldColor = rnnViewer.coldColor,
+        hotColor = rnnViewer.hotColor;
+
+    rnnViewer.values.forEach(function(value) {
+      var v = Math.random() * 2,
+          r = (coldColor.r + hotColor.r) / v,
+          g = (coldColor.g + hotColor.g) / v,
+          b = (coldColor.b + hotColor.b) / v;
+
+      value.frontFace.color.setRGB(
+          r,
+          g,
+          b
+      );
+      value.rearFace.color.setRGB(
+          r,
+          g,
+          b
+      );
+      value.square.colorsNeedUpdate = true;
+      //value.mesh.geometry.elementsNeedUpdate = true;
+      value.mesh.geometry.colorsNeedUpdate = true;
+    });
+    console.log(rnnViewer.values.length);
+    rnnViewer.render();
+  }, 200);
+
+  //Camera controls
+  window.addEventListener('resize', function() {
+    rnnViewer.camera.aspect = window.innerWidth / window.innerHeight;
+    rnnViewer.camera.updateProjectionMatrix();
+    rnnViewer.render();
+  }, false);
+
+  document.getElementById('top').onclick = function() {
+    rnnViewer.viewTop();
+  };
+
+  document.getElementById('side').onclick = function() {
+    rnnViewer.viewSide();
+  };
+
+  document.getElementById('default').onclick = function() {
+    rnnViewer.viewDefault();
+  };
+
+</script>
+</html>
+
