@@ -18,7 +18,7 @@ function RNNViewer(settings) {
   if (this.net) {
     var model = this.net.model;
     this.addMatrix(model.input);
-    this.addMatrix(model.inputConnector);
+    //this.addMatrix(model.inputConnector);
 
     model.hiddenLayers.forEach(this.addMatrix.bind(this));
 
@@ -89,6 +89,11 @@ RNNViewer.prototype = {
     return this;
   },
   render: function() {
+    var depth = this.depth;
+    this.grids.forEach(function(grid, i, grids) {
+      grid.position.z = (grids.length - i) * depth;
+    });
+
     this.camera.lookAt(this.scene.position);
     this.renderer.render(this.scene, this.camera);
     if (this.stats) this.stats.update();
@@ -105,7 +110,10 @@ RNNViewer.prototype = {
       rows = matrix.rows,
       columns = matrix.columns,
       xPixel = -(this.squareWidth * columns)/ 2,
-      yPixel = -(this.squareHeight * rows) / 2;
+      yPixel = -(this.squareHeight * rows) / 2,
+      lowValue = 0,
+      highValue = 0,
+      index = 0;
 
     //height
     for (var row = 1; row <= rows; row++) {
@@ -130,20 +138,39 @@ RNNViewer.prototype = {
 
         this.values.push({
           color: color,
-          value: 0,
+          row: row - 1,
+          column: column - 1,
           matrixIndex: this.grids.length,
           square: square,
           mesh: mesh,
           frontFace: mesh.geometry.faces[0],
           rearFace: mesh.geometry.faces[1],
+          index: index,
+          matrix: matrix,
+          get value() {
+            var value = this.matrix.weights[this.index];
+            if (value > highValue) {
+              highValue = value;
+            }
+            if (value < lowValue) {
+              lowValue = value;
+            }
+            return value || 0;
+          },
+          get percentValue() {
+            var value = this.value;
+            var normalizedHigh = highValue - lowValue;
+            var normalizedValue = value - lowValue;
+            return (normalizedHigh - normalizedValue) / normalizedHigh;
+          }
         });
 
         xPixel += this.squareWidth;
+        index++;
       }
       yPixel += this.squareHeight;
     }
 
-    grid.position.z = this.grids.length * depth || 1;
     this.grids.push(grid);
     this.matrices.push(matrix);
     this.boundingGrid.add(grid);
